@@ -1,0 +1,111 @@
+<?php
+
+use Knuckles\Scribe\Extracting\Strategies;
+
+return [
+    'title'              => 'Product API',
+    'description'        => 'A clean RESTful API for managing products, built with Laravel.',
+    'base_url'           => env('APP_URL', 'http://localhost:8000'),
+
+    'routes' => [
+        [
+            'match' => [
+                'prefixes' => ['api/*'],
+                'domains'  => ['*'],
+                'versions' => ['v1'],
+            ],
+            'include' => [],
+            'exclude' => [],
+            'apply'   => [
+                'headers' => [
+                    'Accept'       => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+                'response_calls' => [
+                    'methods' => ['GET'],
+                    'config'  => [
+                        'APP_ENV'   => 'documentation',
+                        'APP_DEBUG' => false,
+                    ],
+                    'queryParams'  => [],
+                    'bodyParams'   => [],
+                    'fileParams'   => [],
+                    'cookies'      => [],
+                ],
+            ],
+        ],
+    ],
+
+    'type'    => 'static',
+    'theme'   => 'default',
+    'static'  => [
+        'output_path' => 'public/docs',
+    ],
+    'laravel' => [
+        'add_routes'    => true,
+        'docs_url'      => '/docs',
+        'middleware'    => [],
+    ],
+
+    'auth' => [
+        'enabled'     => true,
+        'default'     => false,
+        'in'          => 'bearer',
+        'name'        => 'Authorization',
+        'use_value'   => env('SCRIBE_AUTH_KEY'),
+        'placeholder' => '{YOUR_AUTH_KEY}',
+        'extra_info'  => 'Obtain a token via POST /api/v1/login. Pass it as: Authorization: Bearer {token}',
+    ],
+
+    'intro_text' => <<<'INTRO'
+## Overview
+
+This API provides full CRUD management for the **Product** resource, with optional Sanctum token authentication.
+
+### Base URL
+```
+http://localhost:8000/api/v1
+```
+
+### Response format
+All responses are JSON. Successful responses follow:
+```json
+{ "data": { ... } }          // single resource
+{ "data": [...], "meta": {} } // collection with pagination
+```
+
+### Error format
+```json
+{ "message": "...", "errors": { "field": ["..."] } }
+```
+
+### Auth
+Public endpoints: `GET /products`, `GET /products/{id}`
+Protected endpoints (require Bearer token): `POST`, `PUT`, `DELETE`
+INTRO,
+
+    'example_languages' => ['bash', 'javascript'],
+    'postman'           => ['enabled' => true, 'overrides' => []],
+    'openapi'           => ['enabled' => true, 'overrides' => []],
+
+    'groups' => [
+        'default' => 'Endpoints',
+        'order'   => [
+            'Authentication',
+            'Products',
+        ],
+    ],
+
+    'strategies' => [
+        'metadata'            => [Strategies\Metadata\GetFromDocBlocks::class],
+        'urlParameters'       => [Strategies\UrlParameters\GetFromLaravelAPI::class, Strategies\UrlParameters\GetFromUrlParamTag::class],
+        'queryParameters'     => [Strategies\QueryParameters\GetFromFormRequest::class, Strategies\QueryParameters\GetFromQueryParamTag::class],
+        'headers'             => [Strategies\Headers\GetFromRouteRules::class, Strategies\Headers\GetFromHeaderTag::class],
+        'bodyParameters'      => [Strategies\BodyParameters\GetFromFormRequest::class, Strategies\BodyParameters\GetFromBodyParamTag::class],
+        'responses'           => [Strategies\Responses\UseResponseTag::class, Strategies\Responses\UseResponseFileTag::class, Strategies\Responses\UseApiResourceTags::class, Strategies\Responses\ResponseCalls::class],
+        'responseFields'      => [Strategies\ResponseFields\GetFromResponseFieldTag::class],
+    ],
+
+    'fractal' => ['serializer' => null],
+    'routeMatcher' => \Knuckles\Scribe\Matching\RouteMatcher::class,
+];

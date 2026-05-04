@@ -1,0 +1,527 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost:8000"
+        }
+    ],
+    "info": {
+        "name": "Product API",
+        "_postman_id": "8e4800fb-62d5-43c2-aa07-dd71d4d624c7",
+        "description": "A clean RESTful API for managing products, built with Laravel.",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "description": "\nEndpoints for obtaining and revoking API tokens (Laravel Sanctum).",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/register",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/register"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"Jane Doe\",\"email\":\"jane@example.com\",\"password\":\"secret123\",\"password_confirmation\":\"secret123\"}"
+                        },
+                        "description": "Creates a new user account and returns a Sanctum API token.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 201,
+                            "body": "{\"token\": \"1|abc123...\", \"token_type\": \"Bearer\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/login"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"admin@example.com\",\"password\":\"password\"}"
+                        },
+                        "description": "Authenticates a user and returns a Sanctum API token.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"token\": \"1|abc123...\", \"token_type\": \"Bearer\"}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"message\": \"The provided credentials are incorrect.\", \"errors\": {\"email\": [\"The provided credentials are incorrect.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/logout",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/logout"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Revokes the current API token."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"message\": \"Logged out successfully.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Me",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/me",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/me"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Returns the currently authenticated user."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"id\": 1, \"name\": \"Jane Doe\", \"email\": \"jane@example.com\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Products",
+            "description": "\nEndpoints for managing the product catalogue.",
+            "item": [
+                {
+                    "name": "List products",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/products",
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "headphones",
+                                    "description": "Filter by name or description.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "min_price",
+                                    "value": "10",
+                                    "description": "Filter products with price \u2265 this value.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "max_price",
+                                    "value": "500",
+                                    "description": "Filter products with price \u2264 this value.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "in_stock",
+                                    "value": "1",
+                                    "description": "Return only in-stock (true) or out-of-stock (false) products.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "price",
+                                    "description": "Column to sort by. Allowed: price, created_at, name. Defaults to created_at.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_dir",
+                                    "value": "asc",
+                                    "description": "Sort direction: asc or desc. Defaults to desc.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "20",
+                                    "description": "Number of results per page (1\u2013100). Defaults to 15.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/products?search=headphones&min_price=10&max_price=500&in_stock=1&sort_by=price&sort_dir=asc&per_page=20"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Returns a paginated list of products. Supports full-text search,\nprice-range and stock filters, and column sorting.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": [{\"id\": \"uuid\", \"name\": \"...\", \"price\": 99.99, \"stock\": 10, \"in_stock\": true, \"created_at\": \"...\"}],\n  \"links\": {\"first\": \"...\", \"last\": \"...\", \"prev\": null, \"next\": \"...\"},\n  \"meta\": {\"current_page\": 1, \"per_page\": 15, \"total\": 100}\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get a product",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/products\/:product_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/products\/:product_id",
+                            "variable": [
+                                {
+                                    "id": "product_id",
+                                    "key": "product_id",
+                                    "value": "a1b28621-c14f-4df2-9ad3-eded3dd48bd5",
+                                    "description": "The ID of the product."
+                                },
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "9c7e5b2a-1234-4abc-8def-000000000001",
+                                    "description": "The product UUID."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Returns a single product by its UUID.",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"data\": {\"id\": \"uuid\", \"name\": \"Premium Headphones\", \"price\": 99.99, \"stock\": 50, \"in_stock\": true, \"created_at\": \"...\"}}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"message\": \"No query results for model [App\\\\Models\\\\Product].\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Create a product",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/products",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/products"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"Premium Headphones\",\"description\":\"High-fidelity over-ear headphones with noise cancellation.\",\"price\":99.99,\"stock\":50}"
+                        },
+                        "description": "Creates a new product. Requires authentication."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 201,
+                            "body": "{\"data\": {\"id\": \"uuid\", \"name\": \"Premium Headphones\", \"price\": 99.99, \"stock\": 50, \"in_stock\": true, \"created_at\": \"...\"}}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"message\": \"The name field is required.\", \"errors\": {\"name\": [\"The name field is required.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update a product",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/products\/:product_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/products\/:product_id",
+                            "variable": [
+                                {
+                                    "id": "product_id",
+                                    "key": "product_id",
+                                    "value": "a1b28621-c14f-4df2-9ad3-eded3dd48bd5",
+                                    "description": "The ID of the product."
+                                },
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "9c7e5b2a-1234-4abc-8def-000000000001",
+                                    "description": "The product UUID."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"Premium Headphones v2\",\"description\":\"Updated noise-cancelling model.\",\"price\":109.99,\"stock\":30}"
+                        },
+                        "description": "Updates an existing product. Requires authentication.\nAll fields are optional \u2014 send only what you want to change."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"data\": {\"id\": \"uuid\", \"name\": \"Premium Headphones v2\", \"price\": 109.99, \"stock\": 30, \"in_stock\": true, \"updated_at\": \"...\"}}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"message\": \"No query results for model [App\\\\Models\\\\Product].\"}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\"message\": \"The price must be at least 0.\", \"errors\": {\"price\": [\"The price must be at least 0.\"]}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete a product",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/products\/:product_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/products\/:product_id",
+                            "variable": [
+                                {
+                                    "id": "product_id",
+                                    "key": "product_id",
+                                    "value": "a1b28621-c14f-4df2-9ad3-eded3dd48bd5",
+                                    "description": "The ID of the product."
+                                },
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "9c7e5b2a-1234-4abc-8def-000000000001",
+                                    "description": "The product UUID."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Soft-deletes a product. The record is retained in the database\nand can be restored. Requires authentication."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"message\": \"Product deleted successfully.\"}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\"message\": \"No query results for model [App\\\\Models\\\\Product].\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Endpoints",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/login",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/login",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/login"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated. Please provide a valid Bearer token.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "Authorization",
+                "type": "string"
+            }
+        ]
+    }
+}
